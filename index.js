@@ -59,8 +59,8 @@ app.get('/redirect-content/:id', (req, res) => {
 
   client.getMessageContent(req.param.id)
     .then((stream) => {
+      console.log(stream)
       stream.on('data', (chunk) => {
-        console.log(stream)
         console.log(chunk)
       });
     });
