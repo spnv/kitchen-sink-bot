@@ -53,6 +53,7 @@ app.get('/redirect-content/:id', (req, res) => {
             },
             encoding: null
         }, function(err, response, body) {
+          console.log(body)
           res.end(body, 'binary');
         });
 });
@@ -307,7 +308,7 @@ function handleImage(message, replyToken) {
         replyToken,
         {
           type: 'image',
-          originalContentUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
+          originalContentUrl: `imahe`,
           previewImageUrl: `${baseURL}/redirect-content/${message.id}`,
         }
       );
