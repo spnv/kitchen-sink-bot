@@ -46,16 +46,21 @@ app.post('/callback', line.middleware(config), (req, res) => {
 // webhook callback
 app.get('/redirect-content/:id', (req, res) => {
   // req.body.events should be an array of events
-  request
-        .get(`https://api.line.me/v2/bot/message/${req.param.id}/content`, {
-            'auth': {
-                'bearer': config.channelAccessToken
-            },
-            encoding: null
-        }, function(err, response, body) {
-          console.log(body)
-          res.end(body, 'binary');
-        });
+  // request
+  //       .get(`https://api.line.me/v2/bot/message/${req.param.id}/content`, {
+  //           'auth': {
+  //               'bearer': config.channelAccessToken
+  //           },
+  //           encoding: null
+  //       }, function(err, response, body) {
+  //         console.log(body)
+  //         res.end(body, 'binary');
+  //       });
+
+  client.getMessageContent(req.param.id)
+    .then((stream) => new Promise((resolve, reject) => {
+      res.end(stream, 'binary');
+    }));
 });
 
 // simple reply function
@@ -308,7 +313,7 @@ function handleImage(message, replyToken) {
         replyToken,
         {
           type: 'image',
-          originalContentUrl: `imahe`,
+          originalContentUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
           previewImageUrl: `${baseURL}/redirect-content/${message.id}`,
         }
       );
