@@ -13,7 +13,7 @@ const config = {
 };
 
 // base URL for webhook server
-const baseURL = 'process.env.BASE_URL';
+const baseURL = 'https://kitchen-sink-bot.herokuapp.com';
 
 // create LINE SDK client
 const client = new line.Client(config);
