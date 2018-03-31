@@ -58,9 +58,9 @@ app.get('/redirect-content/:id', (req, res) => {
   //       });
 
   client.getMessageContent(req.param.id)
-    .then((stream) => new Promise((resolve, reject) => {
+    .then((stream) => {
       res.end(stream, 'binary');
-    }));
+    });
 });
 
 // simple reply function
