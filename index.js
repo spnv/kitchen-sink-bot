@@ -272,11 +272,11 @@ function handleImage(message, replyToken) {
   const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
   const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
 
-  return downloadContent(message.id, downloadPath)
-    .then((downloadPath) => {
-      // ImageMagick is needed here to run 'convert'
-      // Please consider about security and performance by yourself
-      cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
+  // return downloadContent(message.id, downloadPath)
+  //   .then((downloadPath) => {
+  //     // ImageMagick is needed here to run 'convert'
+  //     // Please consider about security and performance by yourself
+  //     cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
 
       // return client.replyMessage(
       //   replyToken,
@@ -294,7 +294,7 @@ function handleImage(message, replyToken) {
           previewImageUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
         }
       );
-    });
+    // });
 }
 
 function handleVideo(message, replyToken) {
