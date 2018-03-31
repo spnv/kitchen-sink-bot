@@ -59,7 +59,10 @@ app.get('/redirect-content/:id', (req, res) => {
 
   client.getMessageContent(req.param.id)
     .then((stream) => {
-      res.end(stream, 'binary');
+      stream.on('data', (chunk) => {
+        console.log(stream)
+        console.log(chunk)
+      });
     });
 });
 
