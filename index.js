@@ -5,7 +5,6 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const request = require('request');
 const cloudinary = require('cloudinary');
 
 cloudinary.config({ 
@@ -345,7 +344,7 @@ function downloadContent(messageId, downloadPath) {
       // stream.on('end', () => resolve(downloadPath));
       // stream.on('error', reject);
 
-      cloudinary.uploader.upload(stream, function(result) { 
+      cloudinary.uploader.upload_stream(stream, function(result) { 
         // console.log(result) 
         resolve(result)
       });
