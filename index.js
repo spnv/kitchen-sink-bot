@@ -344,8 +344,9 @@ function downloadContent(messageId, downloadPath) {
       // stream.on('end', () => resolve(downloadPath));
       // stream.on('error', reject);
 
-      cloudinary.uploader.upload_stream(stream, function(result) { 
-        // console.log(result) 
+      cloudinary.uploader.upload_stream(stream, function(result,err) { 
+        console.log(result) 
+        console.log(err) 
         resolve(result)
       });
     }));
