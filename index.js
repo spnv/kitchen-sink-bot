@@ -278,12 +278,20 @@ function handleImage(message, replyToken) {
       // Please consider about security and performance by yourself
       cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
 
+      // return client.replyMessage(
+      //   replyToken,
+      //   {
+      //     type: 'image',
+      //     originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+      //     previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
+      //   }
+      // );
       return client.replyMessage(
         replyToken,
         {
           type: 'image',
-          originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-          previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
+          originalContentUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
+          previewImageUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
         }
       );
     });
