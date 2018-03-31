@@ -43,29 +43,6 @@ app.post('/callback', line.middleware(config), (req, res) => {
     });
 });
 
-// webhook callback
-app.get('/redirect-content/:id', (req, res) => {
-  // req.body.events should be an array of events
-  // request
-  //       .get(`https://api.line.me/v2/bot/message/${req.param.id}/content`, {
-  //           'auth': {
-  //               'bearer': config.channelAccessToken
-  //           },
-  //           encoding: null
-  //       }, function(err, response, body) {
-  //         console.log(body)
-  //         res.end(body, 'binary');
-  //       });
-
-  client.getMessageContent(req.param.id)
-    .then((stream) => {
-      console.log(stream)
-      stream.on('data', (chunk) => {
-        console.log(chunk)
-      });
-    });
-});
-
 // simple reply function
 const replyText = (token, texts) => {
   texts = Array.isArray(texts) ? texts : [texts];
@@ -298,29 +275,21 @@ function handleImage(message, replyToken) {
   const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
   const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
 
-  // return downloadContent(message.id, downloadPath)
-  //   .then((downloadPath) => {
-  //     // ImageMagick is needed here to run 'convert'
-  //     // Please consider about security and performance by yourself
-  //     cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
+  return downloadContent(message.id, downloadPath)
+    .then((downloadPath) => {
+      // ImageMagick is needed here to run 'convert'
+      // Please consider about security and performance by yourself
+      cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
 
-      // return client.replyMessage(
-      //   replyToken,
-      //   {
-      //     type: 'image',
-      //     originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-      //     previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
-      //   }
-      // );
       return client.replyMessage(
         replyToken,
         {
           type: 'image',
-          originalContentUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
-          previewImageUrl: `${baseURL}/redirect-content/${message.id}`,
+          originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+          previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
         }
       );
-    // });
+    });
 }
 
 function handleVideo(message, replyToken) {
