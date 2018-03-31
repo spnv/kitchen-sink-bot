@@ -26,6 +26,7 @@ const app = express();
 // serve static and downloaded files
 app.use('/static', express.static('static'));
 app.use('/downloaded', express.static('downloaded'));
+app.use('/tmp', express.static('tmp'));
 
 // webhook callback
 app.post('/callback', line.middleware(config), (req, res) => {
@@ -272,8 +273,8 @@ function handleText(message, replyToken, source) {
 }
 
 function handleImage(message, replyToken) {
-  const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
-  const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
+  const downloadPath = path.join(__dirname, 'tmp', `${message.id}.jpg`);
+  const previewPath = path.join(__dirname, 'tmp', `${message.id}-preview.jpg`);
 
   return downloadContent(message.id, downloadPath)
     .then((downloadPath) => {
@@ -285,8 +286,8 @@ function handleImage(message, replyToken) {
         replyToken,
         {
           type: 'image',
-          originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-          previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
+          originalContentUrl: baseURL + '/tmp/' + path.basename(downloadPath),
+          previewImageUrl: baseURL + '/tmp/' + path.basename(previewPath),
         }
       );
     });
