@@ -293,7 +293,7 @@ function handleImage(message, replyToken) {
         {
           type: 'image',
           originalContentUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
-          previewImageUrl: `${baseURL}/static/buttons/1040.jpg`,
+          previewImageUrl: `${baseURL}/static/buttons/7718888058743.jpg`,
         }
       );
     // });
