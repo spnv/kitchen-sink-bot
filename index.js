@@ -5,13 +5,6 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const cloudinary = require('cloudinary');
-
-cloudinary.config({ 
-  cloud_name: 'hmqbtjv8e', 
-  api_key: '848682767687613', 
-  api_secret: 'KA9DIY5T4ktdWH8An2BrfhDbv7o' 
-});
 
 // create LINE SDK config from env variables
 const config = {
@@ -20,7 +13,7 @@ const config = {
 };
 
 // base URL for webhook server
-const baseURL = 'https://kitchen-sink-bot.herokuapp.com';
+const baseURL = 'process.env.BASE_URL';
 
 // create LINE SDK client
 const client = new line.Client(config);
@@ -32,7 +25,6 @@ const app = express();
 // serve static and downloaded files
 app.use('/static', express.static('static'));
 app.use('/downloaded', express.static('downloaded'));
-app.use('/tmp', express.static('tmp'));
 
 // webhook callback
 app.post('/callback', line.middleware(config), (req, res) => {
@@ -64,8 +56,6 @@ function handleEvent(event) {
   switch (event.type) {
     case 'message':
       const message = event.message;
-      console.log(message);
-      console.log(`message id : ${message.id}`);
       switch (message.type) {
         case 'text':
           return handleText(message, event.replyToken, event.source);
@@ -279,8 +269,8 @@ function handleText(message, replyToken, source) {
 }
 
 function handleImage(message, replyToken) {
-  const downloadPath = path.join(__dirname, 'tmp', `${message.id}.jpg`);
-  const previewPath = path.join(__dirname, 'tmp', `${message.id}-preview.jpg`);
+  const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
+  const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
 
   return downloadContent(message.id, downloadPath)
     .then((downloadPath) => {
@@ -292,8 +282,8 @@ function handleImage(message, replyToken) {
         replyToken,
         {
           type: 'image',
-          originalContentUrl: baseURL + '/tmp/' + path.basename(downloadPath),
-          previewImageUrl: baseURL + '/tmp/' + path.basename(previewPath),
+          originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+          previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
         }
       );
     });
@@ -339,16 +329,10 @@ function handleAudio(message, replyToken) {
 function downloadContent(messageId, downloadPath) {
   return client.getMessageContent(messageId)
     .then((stream) => new Promise((resolve, reject) => {
-      // const writable = fs.createWriteStream(downloadPath);
-      // stream.pipe(writable);
-      // stream.on('end', () => resolve(downloadPath));
-      // stream.on('error', reject);
-
-      cloudinary.uploader.upload_stream(stream, function(result,err) { 
-        console.log(result) 
-        console.log(err) 
-        resolve(result)
-      });
+      const writable = fs.createWriteStream(downloadPath);
+      stream.pipe(writable);
+      stream.on('end', () => resolve(downloadPath));
+      stream.on('error', reject);
     }));
 }
 
