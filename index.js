@@ -6,6 +6,13 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const request = require('request');
+const cloudinary = require('cloudinary');
+
+cloudinary.config({ 
+  cloud_name: 'hmqbtjv8e', 
+  api_key: '848682767687613', 
+  api_secret: 'KA9DIY5T4ktdWH8An2BrfhDbv7o' 
+});
 
 // create LINE SDK config from env variables
 const config = {
@@ -333,10 +340,15 @@ function handleAudio(message, replyToken) {
 function downloadContent(messageId, downloadPath) {
   return client.getMessageContent(messageId)
     .then((stream) => new Promise((resolve, reject) => {
-      const writable = fs.createWriteStream(downloadPath);
-      stream.pipe(writable);
-      stream.on('end', () => resolve(downloadPath));
-      stream.on('error', reject);
+      // const writable = fs.createWriteStream(downloadPath);
+      // stream.pipe(writable);
+      // stream.on('end', () => resolve(downloadPath));
+      // stream.on('error', reject);
+
+      cloudinary.uploader.upload(stream, function(result) { 
+        // console.log(result) 
+        resolve(result)
+      });
     }));
 }
 
