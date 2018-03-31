@@ -5,6 +5,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
+const request = require('request');
 
 // create LINE SDK config from env variables
 const config = {
@@ -40,6 +41,20 @@ app.post('/callback', line.middleware(config), (req, res) => {
       console.error(err);
       res.status(500).end();
     });
+});
+
+// webhook callback
+app.get('/redirect-content/:id', (req, res) => {
+  // req.body.events should be an array of events
+  request
+        .get(`https://api.line.me/v2/bot/message/${req.param.id}/content`, {
+            'auth': {
+                'bearer': config.channelAccessToken
+            },
+            encoding: null
+        }, function(err, response, body) {
+          res.end(body, 'binary');
+        });
 });
 
 // simple reply function
@@ -293,7 +308,7 @@ function handleImage(message, replyToken) {
         {
           type: 'image',
           originalContentUrl: `https://api.line.me/v2/bot/message/${message.id}/content`,
-          previewImageUrl: `${baseURL}/static/buttons/7718888058743.jpg`,
+          previewImageUrl: `${baseURL}/redirect-content/${message.id}`,
         }
       );
     // });
